@@ -12,59 +12,58 @@ function getInfo(video){
 	});	
 }
 
-//let flag = true;
-function test(output){
-	/*output["formats"].forEach(function (format){
-		console.log("url:"+format["url"]+"\next:"+format["ext"]+"\n");
-	});*/
-	//console.log(output["title"]);
-	//console.log(output);
-	console.log(output);	
-}
-function getPlaylist(output,lambda){
-	var playlist = "";
+function getPlaylist(output){
+	var playlist = [];
 	var i = 0;
 
 	output["entries"].forEach(function (out){
 		playlist[i++] = out["webpage_url"];
 	});
 
-	lambda(playlist);	
+	return playlist;	
 }
 
-function getTitle(output,lambda){
-	lambda(output["title"]);	
+function getTitle(output){
+	return output["title"]
 }
 
-function getFormats(output,lambda){
-	lambda(output["formats"]);
+function getFormats(output){
+	return output["formats"];
 }
 
-function getUrl(formats){
+function getUrl(formats,ext){
+	var tmp = "";
 	formats.forEach(function (format){
-		console.log("url:"+format["url"]+"\next:"+format["ext"]+"\n");
+		if(ext == format["ext"]){	
+			tmp = format["url"];	
+		}
 	});
+	return tmp;
 }
 
-/*function test2(output){
-	var tmp = output;
-	console.log(tmp);
-}*/
-var playlist = "";
-//playlist : "https://www.youtube.com/playlist?list=PLIY8eNdw5tW_uaJgi-FL9QwINS9JxKKg2";
-//video : https://www.youtube.com/watch?v=uBBDMqZKagY";
-
-
-var info = getInfo("https://www.youtube.com/playlist?list=PLIY8eNdw5tW_uaJgi-FL9QwINS9JxKKg2");
-
-var show = function (playlist){
+function show(playlist){
 	playlist.forEach(function (link){
-		console.log(link)
+		console.log(link);
 	});
 };
 
-var tst = function (entries){
-	console.log(entries);
+function run(pLink){
+	var info = getInfo(pLink);
+	info.then(output => {
+		var title = getTitle(output);
+		var playlist = getPlaylist(output);
+		
+		console.log(title);
+		show(playlist);
+
+		var tmp = getInfo(playlist[0]);
+		tmp.then(out => {
+			var formats = getFormats(out);
+			var url = getUrl(formats,"mp4");
+			console.log(url);
+		});
+	});	
 }
 
-info.then(output => getPlaylist(output,show));
+run("https://www.youtube.com/playlist?list=PL2788304DC59DBEB4");
+
