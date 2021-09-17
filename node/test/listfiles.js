@@ -14,6 +14,36 @@ function exists(path){
 	}
 }
 
+function chdir(path){
+	proc = require("process");
+
+	proc.chdir(path);
+}
+
+function remove(file){
+	fs = require("fs");
+	
+	fs.unlinkSync(file);
+}
+
+function getcwd(){
+	proc = require("process");
+
+	return proc.cwd();
+}
+
+console.log(getcwd());
+
+chdir("..");
+
+console.log(getcwd());
+
+console.log(getFiles("."));
+
+chdir("..");
+
+console.log(getcwd());
+
 if(exists(getFiles(".")[0])){
 	console.log(getFiles(".")[0]);
 }
