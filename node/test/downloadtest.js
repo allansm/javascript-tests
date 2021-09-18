@@ -1,4 +1,4 @@
-function download(){
+function download(link,fname,protocol){
 	http = require(protocol);
 	fs = require('fs');
 
@@ -8,31 +8,33 @@ function download(){
 	});
 }
 
-function getSource(link,protocol,lambda){
+function useSource(link,protocol,lambda){
 	http = require(protocol);
 	fs = require('fs');
 	
 	request = http.get(link, function(response) {
-		html = "";
+		src = "";
 		response.setEncoding("utf8");
 
 		response.on('data',function (chunk){
-			html+=chunk;
+			src+=chunk;
 		});
 		
 		response.on('end',lambda);
 	});
 }
 
-function test(link,protocol){
-	http = require(protocol);
-	fs = require('fs');
-	
-	return http.get(link);
+function useJson(link,protocol,lambda){
+
+	useSource(link,protocol,function(){
+		let json = JSON.parse(src);
+		lambda(json);
+	});
 }
 
-/*getSource("https://www.google.com","https",function(){
-	console.log(html);
-});*/
+useJson("https://www.reddit.com/r/popular.json","https",function(json){
+	json["data"]["children"].forEach(function(child){
+		console.log(child["data"]["title"]);
+	});
+});
 
-console.log(test("https://www.google.com","https"));
